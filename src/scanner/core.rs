@@ -193,7 +193,10 @@ impl ScanningLogic {
         const CONTEXT_INDICATORS: &[&str] = &[
             "%", "+", "DROP", "DELETE", "UNION", "innerHTML", "outerHTML", "location", 
             "postMessage", "localStorage", "sessionStorage", "console.log", "console.debug",
-            "fetch", "axios", "password", "token", "secret", "key", "http://", "="
+            "fetch", "axios", "password", "token", "secret", "key", "http://", "=",
+            // HTML-specific indicators
+            "javascript:", "href=", "src=", "onclick", "onload", "onerror", "onmouseover",
+            "eval(", "document.write", "srcdoc", "data:", "expression(", "http-equiv"
         ];
 
         let check_pattern = |pattern: &str| {
@@ -1317,6 +1320,9 @@ impl VulnerabilityScanner {
                                  (file_name.ends_with(".config.ts"))),
                         "html" => matches!(ext, "html" | "htm" | "xhtml" | "shtml" | "dhtml" | "hbs" | "handlebars" | "mustache" | "twig" | "njk" | "nunjucks" | "ejs" | "pug" | "jade"),
                         "django" => matches!(ext, "html" | "htm"),
+                        "sql" => matches!(ext, "sql" | "ddl" | "dml"),
+                        "properties" => matches!(ext, "properties" | "props"),
+                        "config" => matches!(ext, "config" | "conf" | "cfg" | "ini" | "env" | "json" | "yaml" | "yml" | "toml" | "xml"),
                         _ => file_extension == target_extension,
                     };
                     

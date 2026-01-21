@@ -150,6 +150,15 @@ pub fn detect_language_from_path(file_path: &Path) -> Option<&'static str> {
         // Template file extensions that should be treated as HTML
         "hbs" | "handlebars" | "mustache" | "twig" | "njk" | "nunjucks" | "ejs" | "pug" | "jade" => Some("html"),
         
+        // SQL extensions (use simple pattern matching, no AST parsing)
+        "sql" | "ddl" | "dml" => Some("sql"),
+        
+        // Properties file extensions (key=value format)
+        "properties" | "props" => Some("properties"),
+        
+        // Configuration file extensions (structured formats like JSON/YAML/XML/INI)
+        "conf" | "cfg" | "ini" | "env" | "config" | "json" | "yaml" | "yml" | "toml" | "xml" => Some("config"),
+        
         // Vue.js single file components (contain HTML, JS, and CSS)
         "vue" => Some("javascript"),
         

@@ -20,10 +20,13 @@ const EMBEDDED_PYTHON_WORKING_RULES: &str = include_str!("../rules/python/workin
 const EMBEDDED_JAVASCRIPT_FRONTEND_RULES: &str = include_str!("../rules/javascript/frontend_security.ron");
 const EMBEDDED_JAVASCRIPT_BACKEND_RULES: &str = include_str!("../rules/backend_javascript/backend_security.ron");
 const EMBEDDED_JAVASCRIPT_TAINT_RULES: &str = include_str!("../rules/javascript/frontend_taint_security.ron");
+const EMBEDDED_HTML_SECURITY_RULES: &str = include_str!("../rules/html/html_security.ron");
+const EMBEDDED_SQL_SECURITY_RULES: &str = include_str!("../rules/sql/sql_security.ron");
+const EMBEDDED_PROPERTIES_SECURITY_RULES: &str = include_str!("../rules/properties/properties_security.ron");
+const EMBEDDED_CONFIG_SECURITY_RULES: &str = include_str!("../rules/config/config_security.ron");
 
 // Add more embedded rules as needed
 // const EMBEDDED_JAVA_RULES: &str = include_str!("../rules/java/security.ron");
-// const EMBEDDED_HTML_RULES: &str = include_str!("../rules/html/security.ron");
 
 // Structure for centralized exclusion patterns
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -149,6 +152,46 @@ impl Rules {
                             .context("Failed to parse embedded JavaScript backend rules")?;
                         all_rules.push(backend_rules);
                     }
+                }
+            }
+            "html" => {
+                // Load HTML-specific rules (for attributes, etc.)
+                let html_rules: Rules = ron::from_str(EMBEDDED_HTML_SECURITY_RULES)
+                    .context("Failed to parse embedded HTML security rules")?;
+                all_rules.push(html_rules);
+                
+                // Also load JavaScript rules for <script> tag content
+                // Remove file type restrictions so they apply to .html files
+                let mut frontend_rules: Rules = ron::from_str(EMBEDDED_JAVASCRIPT_FRONTEND_RULES)
+                    .context("Failed to parse embedded JavaScript frontend rules")?;
+                for rule in &mut frontend_rules.rules {
+                    rule.file_types = None; // Remove file type restrictions for HTML context
+                }
+                all_rules.push(frontend_rules);
+                
+                let mut taint_rules: Rules = ron::from_str(EMBEDDED_JAVASCRIPT_TAINT_RULES)
+                    .context("Failed to parse embedded JavaScript taint rules")?;
+                for rule in &mut taint_rules.rules {
+                    rule.file_types = None; // Remove file type restrictions for HTML context
+                }
+                all_rules.push(taint_rules);
+            }
+            "sql" | "properties" | "config" => {
+                // SQL, properties, and config files use simple pattern matching (no AST parsing)
+                if language == "sql" {
+                    let sql_rules: Rules = ron::from_str(EMBEDDED_SQL_SECURITY_RULES)
+                        .context("Failed to parse embedded SQL security rules")?;
+                    all_rules.push(sql_rules);
+                }
+                
+                if language == "properties" || language == "config" {
+                    let properties_rules: Rules = ron::from_str(EMBEDDED_PROPERTIES_SECURITY_RULES)
+                        .context("Failed to parse embedded properties security rules")?;
+                    all_rules.push(properties_rules);
+                    
+                    let config_rules: Rules = ron::from_str(EMBEDDED_CONFIG_SECURITY_RULES)
+                        .context("Failed to parse embedded config security rules")?;
+                    all_rules.push(config_rules);
                 }
             }
             // Add more languages as needed

@@ -84,27 +84,6 @@
             tags: Some(["crypto", "encryption", "rc4", "weak"])
         ),
         (
-            id: Some("python-crypto-005"),
-            name: Some("Hardcoded Cryptographic Key"),
-            category: Some("cryptography"),
-            mode: "search",
-            patterns: Some([
-                "key\\s*=\\s*[\"'].*[\"']",
-                "password\\s*=\\s*[\"'].*[\"']",
-                "secret\\s*=\\s*[\"'].*[\"']",
-                "token\\s*=\\s*[\"'].*[\"']",
-            ]),
-            finding_type: Some("Hardcoded Cryptographic Material"),
-            severity: Some("High"),
-            confidence: Some("Medium"),
-            cwe_id: Some("cwe-798"),
-            description: Some("Hardcoded cryptographic keys or secrets detected"),
-            file_types: Some((
-                extensions: Some([".py"])
-            )),
-            tags: Some(["crypto", "hardcoded", "key", "secret"])
-        ),
-        (
             id: Some("python-crypto-006"),
             name: Some("Weak Random Number Generation"),
             category: Some("cryptography"),
@@ -145,36 +124,5 @@
             )),
             tags: Some(["crypto", "encryption", "ecb", "mode"])
         ),
-        
-        // Taint mode for cryptographic material flows
-        (
-            id: Some("python-crypto-taint-001"),
-            name: Some("Hardcoded Key Taint Flow"),
-            category: Some("cryptography"),
-            mode: "taint",
-            sources: Some([
-                "\".*\"",
-                "'.*'",
-                "b\".*\"",
-                "b'.*'",
-            ]),
-            sinks: Some([
-                "\\.new\\(",
-                "\\.encrypt\\(",
-                "\\.decrypt\\(",
-                "key\\s*=",
-                "password\\s*=",
-                "secret\\s*=",
-            ]),
-            finding_type: Some("Hardcoded Cryptographic Material in Data Flow"),
-            severity: Some("High"),
-            confidence: Some("Medium"),
-            cwe_id: Some("cwe-798"),
-            description: Some("Hardcoded string flows to cryptographic operations"),
-            file_types: Some((
-                extensions: Some([".py"])
-            )),
-            tags: Some(["crypto", "taint", "hardcoded", "key"])
-        )
     ]
-) 
+)

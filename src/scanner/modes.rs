@@ -422,7 +422,6 @@ pub fn run_taint_analysis_with_verbosity(cli: &Cli, root_dir: &str, show_progres
     let taint_rules_count = rules.rules.iter().filter(|r| r.is_taint_rule()).count();
     
     if taint_rules_count == 0 {
-        // No taint rules - return empty results (gracefully handle search-only rule sets)
         if show_progress && verbose_mode {
             println!("ℹ️  No taint flow rules found for this language - skipping taint analysis");
         }

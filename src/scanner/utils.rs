@@ -130,33 +130,23 @@ pub fn rule_applies_to_file_path(file_types: Option<&FileTypes>, file_path: &Pat
 pub fn detect_language_from_path(file_path: &Path) -> Option<&'static str> {
     let file_name = file_path.file_name()?.to_str()?;
     
-    // Handle standard extensions
     match file_path.extension()?.to_str()? {
-        // Python extensions
         "py" | "pyw" | "pyi" | "pyx" => Some("python"),
         
-        // Java extensions  
         "java" | "jav" => Some("java"),
         
-        // JavaScript extensions (including modern variants)
         "js" | "mjs" | "cjs" | "jsx" => Some("javascript"),
         
-        // TypeScript extensions (including all variants)
         "ts" | "tsx" | "mts" | "cts" => Some("tsx"),
         
-        // HTML and template extensions
         "html" | "htm" | "xhtml" | "shtml" | "dhtml" => Some("html"),
         
-        // Template file extensions that should be treated as HTML
         "hbs" | "handlebars" | "mustache" | "twig" | "njk" | "nunjucks" | "ejs" | "pug" | "jade" => Some("html"),
         
-        // SQL extensions (use simple pattern matching, no AST parsing)
         "sql" | "ddl" | "dml" => Some("sql"),
         
-        // Properties file extensions (key=value format)
         "properties" | "props" => Some("properties"),
         
-        // Configuration file extensions (structured formats like JSON/YAML/XML/INI)
         "conf" | "cfg" | "ini" | "env" | "config" | "json" | "yaml" | "yml" | "toml" | "xml" => Some("config"),
         
         // Vue.js single file components (contain HTML, JS, and CSS)

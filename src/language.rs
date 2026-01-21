@@ -274,23 +274,19 @@ impl LanguageSupport for DjangoTemplateLanguage {
     }
 }
 
-// SQL file implementation (simple text-based, no AST - patterns work better than parsing)
 pub struct SQLLanguage;
 
 impl LanguageSupport for SQLLanguage {
     fn name(&self) -> &'static str { "sql" }
     fn file_extension(&self) -> &'static str { ".sql" }
     fn tree_sitter_language(&self) -> Language {
-        // SQL uses simple text pattern matching - use JavaScript parser as dummy
         tree_sitter_javascript::LANGUAGE.into()
     }
     fn call_node_types(&self) -> &[&'static str] {
-        // Return program node so the entire file content is checked for patterns
         &["program"]
     }
 
     fn get_function_name<'a>(&self, node: &Node, source: &'a [u8]) -> Option<&'a str> {
-        // Return the full text as "function name" for pattern matching
         let text = &source[node.start_byte()..node.end_byte()];
         std::str::from_utf8(text).ok()
     }
@@ -300,49 +296,41 @@ impl LanguageSupport for SQLLanguage {
     }
 }
 
-// Properties file implementation (simple text-based, no AST)
 pub struct PropertiesLanguage;
 
 impl LanguageSupport for PropertiesLanguage {
     fn name(&self) -> &'static str { "properties" }
     fn file_extension(&self) -> &'static str { ".properties" }
     fn tree_sitter_language(&self) -> Language {
-        // Properties files don't need parsing - use JavaScript parser as dummy
         tree_sitter_javascript::LANGUAGE.into()
     }
     fn call_node_types(&self) -> &[&'static str] {
-        // Return program node so the entire file content is checked for patterns
         &["program"]
     }
 
     fn get_function_name<'a>(&self, node: &Node, source: &'a [u8]) -> Option<&'a str> {
-        // Return the full text as "function name" for pattern matching
         let text = &source[node.start_byte()..node.end_byte()];
         std::str::from_utf8(text).ok()
     }
 
     fn get_arguments_node<'a>(&self, _node: &'a Node) -> Option<Node<'a>> {
-        None // Not used for simple text matching
+        None 
     }
 }
 
-// Config file implementation (simple text-based, no AST)
 pub struct ConfigLanguage;
 
 impl LanguageSupport for ConfigLanguage {
     fn name(&self) -> &'static str { "config" }
     fn file_extension(&self) -> &'static str { ".config" }
     fn tree_sitter_language(&self) -> Language {
-        // Config files don't need parsing - use JavaScript parser as dummy
         tree_sitter_javascript::LANGUAGE.into()
     }
     fn call_node_types(&self) -> &[&'static str] {
-        // Return program node so the entire file content is checked for patterns
         &["program"]
     }
 
     fn get_function_name<'a>(&self, node: &Node, source: &'a [u8]) -> Option<&'a str> {
-        // Return the full text as "function name" for pattern matching
         let text = &source[node.start_byte()..node.end_byte()];
         std::str::from_utf8(text).ok()
     }

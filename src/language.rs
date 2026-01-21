@@ -26,6 +26,7 @@ pub fn get_language_support(language_name: &str) -> Result<Box<dyn LanguageSuppo
         #[cfg(feature = "django")]
         "django" | "django-html" => Ok(Box::new(DjangoTemplateLanguage)),
         "sql" => Ok(Box::new(SQLLanguage)),
+        "xml" => Ok(Box::new(XMLLanguage)),
         "properties" => Ok(Box::new(PropertiesLanguage)),
         "config" => Ok(Box::new(ConfigLanguage)),
         _ => {
@@ -43,6 +44,7 @@ pub fn get_language_support(language_name: &str) -> Result<Box<dyn LanguageSuppo
             #[cfg(feature = "django")]
             supported.push("django");
             supported.push("sql");
+            supported.push("xml");
             supported.push("properties");
             supported.push("config");
 
@@ -279,6 +281,28 @@ pub struct SQLLanguage;
 impl LanguageSupport for SQLLanguage {
     fn name(&self) -> &'static str { "sql" }
     fn file_extension(&self) -> &'static str { ".sql" }
+    fn tree_sitter_language(&self) -> Language {
+        tree_sitter_javascript::LANGUAGE.into()
+    }
+    fn call_node_types(&self) -> &[&'static str] {
+        &["program"]
+    }
+
+    fn get_function_name<'a>(&self, node: &Node, source: &'a [u8]) -> Option<&'a str> {
+        let text = &source[node.start_byte()..node.end_byte()];
+        std::str::from_utf8(text).ok()
+    }
+
+    fn get_arguments_node<'a>(&self, _node: &'a Node) -> Option<Node<'a>> {
+        None // Not used for simple text matching
+    }
+}
+
+pub struct XMLLanguage;
+
+impl LanguageSupport for XMLLanguage {
+    fn name(&self) -> &'static str { "xml" }
+    fn file_extension(&self) -> &'static str { ".xml" }
     fn tree_sitter_language(&self) -> Language {
         tree_sitter_javascript::LANGUAGE.into()
     }

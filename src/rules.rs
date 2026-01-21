@@ -22,6 +22,7 @@ const EMBEDDED_JAVASCRIPT_BACKEND_RULES: &str = include_str!("../rules/backend_j
 const EMBEDDED_JAVASCRIPT_TAINT_RULES: &str = include_str!("../rules/javascript/frontend_taint_security.ron");
 const EMBEDDED_HTML_SECURITY_RULES: &str = include_str!("../rules/html/html_security.ron");
 const EMBEDDED_SQL_SECURITY_RULES: &str = include_str!("../rules/sql/sql_security.ron");
+const EMBEDDED_XML_SECURITY_RULES: &str = include_str!("../rules/xml/xml_security.ron");
 const EMBEDDED_PROPERTIES_SECURITY_RULES: &str = include_str!("../rules/properties/properties_security.ron");
 const EMBEDDED_CONFIG_SECURITY_RULES: &str = include_str!("../rules/config/config_security.ron");
 
@@ -176,12 +177,18 @@ impl Rules {
                 }
                 all_rules.push(taint_rules);
             }
-            "sql" | "properties" | "config" => {
-                // SQL, properties, and config files use simple pattern matching (no AST parsing)
+            "sql" | "xml" | "properties" | "config" => {
+                // SQL, XML, properties, and config files use simple pattern matching (no AST parsing)
                 if language == "sql" {
                     let sql_rules: Rules = ron::from_str(EMBEDDED_SQL_SECURITY_RULES)
                         .context("Failed to parse embedded SQL security rules")?;
                     all_rules.push(sql_rules);
+                }
+                
+                if language == "xml" {
+                    let xml_rules: Rules = ron::from_str(EMBEDDED_XML_SECURITY_RULES)
+                        .context("Failed to parse embedded XML security rules")?;
+                    all_rules.push(xml_rules);
                 }
                 
                 if language == "properties" || language == "config" {

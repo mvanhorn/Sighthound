@@ -1321,8 +1321,9 @@ impl VulnerabilityScanner {
                         "html" => matches!(ext, "html" | "htm" | "xhtml" | "shtml" | "dhtml" | "hbs" | "handlebars" | "mustache" | "twig" | "njk" | "nunjucks" | "ejs" | "pug" | "jade"),
                         "django" => matches!(ext, "html" | "htm"),
                         "sql" => matches!(ext, "sql" | "ddl" | "dml"),
+                        "xml" => matches!(ext, "xml" | "xsd" | "xsl" | "xslt" | "wsdl" | "svg" | "pom"),
                         "properties" => matches!(ext, "properties" | "props"),
-                        "config" => matches!(ext, "config" | "conf" | "cfg" | "ini" | "env" | "json" | "yaml" | "yml" | "toml" | "xml"),
+                        "config" => matches!(ext, "config" | "conf" | "cfg" | "ini" | "env" | "json" | "yaml" | "yml" | "toml"),
                         _ => file_extension == target_extension,
                     };
                     

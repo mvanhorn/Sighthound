@@ -11,7 +11,7 @@ name = "sighthound"
 path = "src/main.rs"
 
 [features]
-default = ["python", "java", "javascript", "tsx", "html", "django", "sql", "properties", "config"]
+default = ["python", "java", "javascript", "tsx", "html", "django", "sql", "xml", "properties", "config"]
 python = ["tree-sitter-python"]
 java = ["tree-sitter-java"]
 javascript = ["tree-sitter-javascript"]
@@ -19,6 +19,7 @@ tsx = ["tree-sitter-typescript"]
 html = ["tree-sitter-html"]
 django = ["tree-sitter-html"]  # Reuse HTML parser for Django templates
 sql = []  # Text-based pattern matching, no parser needed
+xml = []  # Text-based pattern matching, no parser needed
 properties = []  # Text-based pattern matching, no parser needed
 config = []  # Text-based pattern matching, no parser needed
 

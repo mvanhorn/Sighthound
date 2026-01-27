@@ -10,7 +10,7 @@ use indicatif::{ProgressBar, ProgressStyle, ProgressDrawTarget};
 use memmap2::Mmap;
 use rayon::prelude::*;
 use std::cell::RefCell;
-use std::collections::{HashMap, BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 use std::fs::{self, File};
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
@@ -688,6 +688,14 @@ impl ScanningLogic {
         };
         // Search for the actual vulnerable line within the node
         for (line_offset, line) in lines.iter().enumerate() {
+            let trimmed = line.trim();
+            
+            // Skip comment lines (various languages)
+            if trimmed.starts_with("//") || trimmed.starts_with("/*") || 
+               trimmed.starts_with("--") || trimmed.starts_with("#") || trimmed.starts_with("\"\"\"") {
+                continue;
+            }
+            
             for pattern in &sink_patterns {
                 // Clean pattern for matching (remove wildcards and make more flexible)
                 let clean_pattern = pattern
@@ -702,7 +710,15 @@ impl ScanningLogic {
         }
         // If no specific sink pattern found, look for assignment operations (common vulnerability pattern)
         for (line_offset, line) in lines.iter().enumerate() {
-            if line.contains('=') && !line.trim().starts_with("//") && !line.trim().starts_with("/*") {
+            let trimmed = line.trim();
+            
+            // Skip comment lines
+            if trimmed.starts_with("//") || trimmed.starts_with("/*") || 
+               trimmed.starts_with("--") || trimmed.starts_with("#") || trimmed.starts_with("\"\"\"") {
+                continue;
+            }
+            
+            if line.contains('=') {
                 // Skip function declarations and variable declarations without assignment
                 if !line.contains("function") && !line.contains("def ") && 
                    !line.contains("const ") && !line.contains("let ") && !line.contains("var ") {
